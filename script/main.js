@@ -585,6 +585,27 @@
         });
     }
 
+    // ===== 触摸设备支持 =====
+    if (searchDot) {
+        searchDot.addEventListener('touchstart', function(e) {
+            if (!stealthMode) return;
+            e.preventDefault();
+            showSearch();
+        }, { passive: false });
+    }
+    document.addEventListener('touchstart', function(e) {
+        if (!stealthMode) return;
+        if (!searchExpandContainer || !searchExpandContainer.classList.contains('expanded')) return;
+        const target = e.target;
+        const inDot = searchDot && searchDot.contains(target);
+        const inContainer = searchExpandContainer && searchExpandContainer.contains(target);
+        const inBookmarks = bookmarksContainer && bookmarksContainer.contains(target);
+        const inSuggestions = searchSuggestions && searchSuggestions.contains(target);
+        if (!inDot && !inContainer && !inBookmarks && !inSuggestions) {
+            hideSearch();
+        }
+    }, { passive: true });
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && stealthMode) {
             searchExpandContainer.classList.remove('expanded');

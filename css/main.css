@@ -1719,3 +1719,425 @@ body.theme-system .weather-desc {
         font-size: 0.6rem;
     }
 }
+
+/* ============================================
+   移动端全面适配 (大屏 -> 中屏 -> 小屏)
+   ============================================ */
+
+/* 触摸设备：禁用 hover 效果，启用 active 效果 */
+@media (hover: none) and (pointer: coarse) {
+    .search-dot:hover,
+    .settings-dot:hover,
+    .weather-widget:hover,
+    .bookmark-card:hover,
+    .engine-list-item:hover,
+    .theme-btn:hover,
+    .wallpaper-btn:hover,
+    .settings-btn:hover,
+    .mute-btn:hover,
+    .history-tag:hover,
+    .suggestion-item:hover {
+        background: inherit;
+        transform: none;
+    }
+    .search-dot:active,
+    .settings-dot:active,
+    .weather-widget:active,
+    .bookmark-card:active,
+    .engine-list-item:active,
+    .theme-btn:active,
+    .wallpaper-btn:active,
+    .settings-btn:active,
+    .mute-btn:active,
+    .history-tag:active,
+    .suggestion-item:active {
+        opacity: 0.7;
+        transform: scale(0.95);
+    }
+}
+
+/* 中等屏幕：平板/折叠屏 */
+@media (max-width: 900px) {
+    .bookmarks-container {
+        max-width: 95vw;
+    }
+    .settings-popup {
+        min-width: 300px;
+        max-width: 90vw;
+    }
+    .liquid-toggle-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* 768px 以下：手机横屏/小平板 */
+@media (max-width: 768px) {
+    body {
+        /* 适配全面屏安全区 */
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .time-display {
+        top: max(20px, env(safe-area-inset-top));
+        padding: 10px 20px 8px;
+        border-radius: 18px;
+    }
+    .time-main {
+        font-size: 2.4rem;
+        letter-spacing: 1.2px;
+    }
+    .time-date {
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+    }
+    .daily-quote-module {
+        max-width: calc(100vw - 100px);
+        top: max(80px, calc(env(safe-area-inset-top) + 72px));
+        left: 16px;
+        padding: 8px 12px;
+    }
+    .quote-text {
+        font-size: 0.78rem;
+        -webkit-line-clamp: 2;
+    }
+    .settings-dot {
+        top: max(16px, env(safe-area-inset-top));
+        right: 16px;
+        width: 40px;
+        height: 40px;
+    }
+    .search-dot-wrapper {
+        /* 上移让位给顶部信息 */
+        top: 48%;
+    }
+    .search-dot {
+        width: 56px;
+        height: 56px;
+    }
+    .search-dot svg {
+        width: 28px;
+        height: 28px;
+    }
+    .search-expand-container.expanded,
+    .search-dot-wrapper.stealth-off .search-expand-container {
+        width: 92vw;
+        max-width: 600px;
+    }
+    .search-expand-container .search-row {
+        padding: 5px 5px 5px 18px;
+    }
+    .search-expand-container .search-row input {
+        font-size: 0.95rem;
+    }
+    .bookmarks-container {
+        bottom: 16px;
+        padding: 10px 8px 8px;
+        max-width: 95vw;
+    }
+    .bookmark-card {
+        width: 60px;
+    }
+    .bookmark-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+    .bookmark-name {
+        font-size: 0.65rem;
+        max-width: 60px;
+    }
+    .bookmark-remove {
+        width: 18px;
+        height: 18px;
+        font-size: 0.6rem;
+        top: -4px;
+        right: -4px;
+    }
+    .weather-widget {
+        bottom: 16px;
+        left: 16px;
+        padding: 10px 14px;
+        min-width: 0;
+        gap: 8px;
+    }
+    .wallpaper-info {
+        bottom: 16px;
+        right: 16px;
+        font-size: 0.7rem;
+        padding: 6px 10px;
+        max-width: 50vw;
+    }
+    .wallpaper-info .info-title {
+        font-size: 0.7rem;
+    }
+    .wallpaper-info .info-meta {
+        font-size: 0.55rem;
+    }
+    .settings-popup {
+        top: max(60px, calc(env(safe-area-inset-top) + 50px));
+        right: 12px;
+        left: 12px;
+        min-width: 0;
+        max-width: none;
+        width: auto;
+        max-height: 80vh;
+        border-radius: 18px;
+    }
+    .settings-content {
+        padding: 14px;
+        gap: 10px;
+    }
+    .settings-group {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .effect-slider {
+        width: 100%;
+        order: 3;
+    }
+    .effect-value {
+        min-width: 32px;
+    }
+    .liquid-toggle-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 8px;
+    }
+    .liquid-toggle-row {
+        font-size: 0.68rem;
+        padding: 4px;
+    }
+    .bookmarks-grid {
+        gap: 8px;
+        padding: 0 12px 6px;
+    }
+    .bookmarks-header {
+        padding: 0 12px;
+        margin-bottom: 8px;
+    }
+}
+
+/* 480px 以下：小屏手机 */
+@media (max-width: 480px) {
+    .time-display {
+        top: max(16px, env(safe-area-inset-top));
+        padding: 8px 16px 6px;
+        border-radius: 16px;
+    }
+    .time-main {
+        font-size: 2rem;
+        letter-spacing: 1px;
+    }
+    .time-date {
+        font-size: 0.62rem;
+        letter-spacing: 0.6px;
+    }
+    .daily-quote-module {
+        max-width: calc(100vw - 80px);
+        top: max(72px, calc(env(safe-area-inset-top) + 64px));
+        left: 12px;
+        padding: 6px 10px;
+    }
+    .quote-text {
+        font-size: 0.7rem;
+        -webkit-line-clamp: 1;
+    }
+    .quote-author {
+        font-size: 0.6rem;
+    }
+    .settings-dot {
+        top: max(12px, env(safe-area-inset-top));
+        right: 12px;
+        width: 36px;
+        height: 36px;
+    }
+    .search-dot-wrapper {
+        top: 45%;
+    }
+    .search-dot {
+        width: 50px;
+        height: 50px;
+    }
+    .search-dot svg {
+        width: 24px;
+        height: 24px;
+    }
+    .search-expand-container .search-row {
+        border-radius: 30px;
+    }
+    .bookmarks-container {
+        bottom: 12px;
+        padding: 8px 6px 6px;
+        border-radius: 16px;
+    }
+    .bookmarks-header {
+        padding: 0 10px;
+        margin-bottom: 6px;
+    }
+    .bookmarks-label {
+        font-size: 0.7rem;
+    }
+    .add-bookmark-btn {
+        width: 22px;
+        height: 22px;
+        font-size: 0.85rem;
+    }
+    .bookmarks-grid {
+        gap: 6px;
+        padding: 0 8px 4px;
+    }
+    .bookmark-card {
+        width: 52px;
+    }
+    .bookmark-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
+    }
+    .bookmark-name {
+        font-size: 0.6rem;
+        max-width: 52px;
+    }
+    .bookmark-remove {
+        width: 16px;
+        height: 16px;
+        font-size: 0.55rem;
+    }
+    .weather-widget {
+        bottom: 12px;
+        left: 12px;
+        padding: 8px 12px;
+        gap: 8px;
+        min-width: 0;
+    }
+    .weather-icon {
+        font-size: 1.5rem;
+    }
+    .weather-temp {
+        font-size: 1.05rem;
+    }
+    .weather-desc {
+        font-size: 0.6rem;
+    }
+    .weather-city {
+        font-size: 0.55rem;
+    }
+    .wallpaper-info {
+        bottom: 12px;
+        right: 12px;
+        font-size: 0.65rem;
+        padding: 5px 8px;
+        max-width: 45vw;
+    }
+    .wallpaper-info .info-title {
+        font-size: 0.62rem;
+    }
+    .wallpaper-info .info-meta {
+        font-size: 0.5rem;
+    }
+    .settings-popup {
+        top: max(50px, calc(env(safe-area-inset-top) + 44px));
+        right: 8px;
+        left: 8px;
+        border-radius: 16px;
+    }
+    .settings-content {
+        padding: 12px;
+        gap: 8px;
+    }
+    .settings-group {
+        gap: 4px;
+    }
+    .settings-label {
+        font-size: 0.75rem;
+        min-width: 60px;
+    }
+    .settings-btn,
+    .theme-btn,
+    .wallpaper-btn,
+    .engine-list-item {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+    }
+    .liquid-toggle-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 6px;
+    }
+    .liquid-toggle-row {
+        font-size: 0.62rem;
+        padding: 3px;
+    }
+    .liquid-toggle-row input[type="checkbox"] {
+        width: 12px;
+        height: 12px;
+    }
+    .engine-list-item {
+        padding: 6px 8px;
+        gap: 4px;
+    }
+    .engine-arrow-btn {
+        width: 18px;
+        height: 18px;
+        font-size: 0.55rem;
+    }
+    .engine-name {
+        font-size: 0.7rem;
+    }
+    .engine-url {
+        font-size: 0.58rem;
+    }
+    .history-tag {
+        padding: 4px 10px;
+        font-size: 0.7rem;
+    }
+    .suggestion-item {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* 横屏手机：避免高度过小导致布局拥挤 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .time-display {
+        padding: 6px 16px 4px;
+    }
+    .time-main {
+        font-size: 1.6rem;
+    }
+    .time-date {
+        font-size: 0.6rem;
+    }
+    .daily-quote-module {
+        top: max(60px, env(safe-area-inset-top));
+        max-width: 200px;
+    }
+    .search-dot-wrapper {
+        top: 50%;
+    }
+    .search-dot {
+        width: 44px;
+        height: 44px;
+    }
+    .search-dot svg {
+        width: 22px;
+        height: 22px;
+    }
+    .bookmarks-container {
+        bottom: 8px;
+    }
+    .weather-widget {
+        bottom: 8px;
+    }
+    .wallpaper-info {
+        bottom: 8px;
+    }
+}
+
+/* 减少动画（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+        animation-iteration-count: 1 !important;
+    }
+}
