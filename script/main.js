@@ -60,6 +60,7 @@
     let bookmarks = [];
     const MAX_HISTORY = 15;
     const HISTORY_STORAGE_KEY = 'startpage-search-history';
+    const MAX_HISTORY_DISPLAY_MOBILE = 6;
     const CONFIG_STORAGE_KEY = 'startpage-config';
     const IDLE_DELAY = 3000;
 
@@ -223,6 +224,63 @@
         settingsDot: '.settings-dot'
     };
 
+    // ============= 组件可见性控制 =============
+    const VISIBLE_COMPS_KEY = 'startpage-visible-components';
+    let visibleComponents = {
+        time: true, quote: true, search: true, bookmarks: true,
+        weather: false, wallpaper: false,
+        searchDot: true, settingsDot: true
+    };
+
+    function loadVisibleComponents() {
+        try {
+            const saved = localStorage.getItem(VISIBLE_COMPS_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.keys(visibleComponents).forEach(k => {
+                    if (typeof parsed[k] === 'boolean') visibleComponents[k] = parsed[k];
+                });
+            }
+        } catch (_) {}
+    }
+
+    function saveVisibleComponents() {
+        try { localStorage.setItem(VISIBLE_COMPS_KEY, JSON.stringify(visibleComponents)); } catch (_) {}
+    }
+
+    function applyVisibleComponents() {
+        const body = document.body;
+        Object.keys(visibleComponents).forEach(key => {
+            const className = 'hide-' + key;
+            if (visibleComponents[key]) {
+                body.classList.remove(className);
+            } else {
+                body.classList.add(className);
+            }
+        });
+    }
+
+    function toggleVisibleComponent(key, enabled) {
+        if (!(key in visibleComponents)) return;
+        visibleComponents[key] = !!enabled;
+        applyVisibleComponents();
+        saveVisibleComponents();
+    }
+
+    // ============= 响应式缩放 =============
+    function updateScaleFactor() {
+        const BASE_WIDTH = 1920;
+        const MIN_WIDTH = 320;
+        const viewportWidth = window.innerWidth;
+        const scale = Math.max(MIN_WIDTH / BASE_WIDTH, Math.min(viewportWidth / BASE_WIDTH, 1));
+        document.documentElement.style.setProperty('--scale', scale.toFixed(3));
+    }
+
+    function initScaleFactor() {
+        updateScaleFactor();
+        window.addEventListener('resize', updateScaleFactor);
+    }
+
     function loadEffectSettings() {
         try {
             const saved = localStorage.getItem(EFFECT_STORAGE_KEY);
@@ -324,7 +382,17 @@
                 });
             }
         });
+        document.querySelectorAll('input[data-visible-comp]').forEach(cb => {
+            const key = cb.getAttribute('data-visible-comp');
+            if (key in visibleComponents) {
+                cb.checked = visibleComponents[key];
+                cb.addEventListener('change', e => {
+                    toggleVisibleComponent(key, e.target.checked);
+                });
+            }
+        });
         applyEffectSettings();
+        applyVisibleComponents();
     }
 
     // ============= 联想搜索 =============
@@ -490,6 +558,44 @@
             return;
         }
         
+        const isMobile = window.innerWidth < 768;
+        const displayCount = isMobile ? MAX_HISTORY_DISPLAY_MOBILE : searchHistoryData.length;
+        const itemsToShow = searchHistoryData.slice(0, displayCount);
+        
+        itemsToShow.forEach(item => {
+            const tag = document.createElement('div');
+            tag.className = 'history-tag';
+            tag.innerHTML = `<span>${item}</span><span class="remove-tag">×</span>`;
+            
+            tag.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-tag')) {
+                    e.stopPropagation();
+                    removeFromHistory(item);
+                    return;
+                }
+                searchInput.value = item;
+                performSearch();
+            });
+            
+            historyTags.appendChild(tag);
+        });
+        
+        if (isMobile && searchHistoryData.length > displayCount) {
+            const showMore = document.createElement('div');
+            showMore.className = 'history-show-more';
+            showMore.textContent = `+${searchHistoryData.length - displayCount} 更多`;
+            showMore.addEventListener('click', function() {
+                renderSearchHistoryFull();
+            });
+            historyTags.appendChild(showMore);
+        }
+    }
+
+    function renderSearchHistoryFull() {
+        if (!historyTags) return;
+        
+        historyTags.innerHTML = '';
+        
         searchHistoryData.forEach(item => {
             const tag = document.createElement('div');
             tag.className = 'history-tag';
@@ -507,6 +613,14 @@
             
             historyTags.appendChild(tag);
         });
+        
+        const showLess = document.createElement('div');
+        showLess.className = 'history-show-more';
+        showLess.textContent = '收起';
+        showLess.addEventListener('click', function() {
+            renderSearchHistory();
+        });
+        historyTags.appendChild(showLess);
     }
 
     function performSearch() {
@@ -815,14 +929,38 @@
     const weatherDesc = document.getElementById('weatherDesc');
     const weatherCity = document.getElementById('weatherCity');
 
-    function getWeatherEmoji(desc) {
-        if (!desc) return '🌤️';
-        for (const key of Object.keys(WEATHER_ICONS)) {
-            if (desc.toLowerCase().includes(key.toLowerCase())) {
-                return WEATHER_ICONS[key];
-            }
-        }
+    function getWeatherEmoji(code) {
+        if (code === undefined || code === null) return '🌤️';
+        if (code >= 0 && code <= 3) return '☀️';
+        if (code >= 45 && code <= 48) return '🌫️';
+        if (code >= 51 && code <= 55) return '🌧️';
+        if (code >= 56 && code <= 57) return '❄️';
+        if (code >= 61 && code <= 67) return '🌧️';
+        if (code >= 71 && code <= 77) return '❄️';
+        if (code >= 80 && code <= 82) return '⛈️';
+        if (code >= 85 && code <= 86) return '🌨️';
+        if (code >= 95 && code <= 99) return '⚡';
         return '🌤️';
+    }
+
+    function getWeatherDesc(code) {
+        if (code === undefined || code === null) return '未知';
+        if (code === 0) return '晴';
+        if (code === 1) return '晴';
+        if (code === 2) return '多云';
+        if (code === 3) return '阴';
+        if (code >= 45 && code <= 48) return '雾';
+        if (code >= 51 && code <= 53) return '小雨';
+        if (code >= 55 && code <= 57) return '大雨';
+        if (code >= 61 && code <= 63) return '雨';
+        if (code >= 65 && code <= 67) return '暴雨';
+        if (code >= 71 && code <= 73) return '小雪';
+        if (code >= 75 && code <= 77) return '大雪';
+        if (code >= 80 && code <= 82) return '阵雨';
+        if (code >= 85 && code <= 86) return '阵雪';
+        if (code >= 95 && code <= 96) return '雷暴';
+        if (code === 99) return '雷暴伴冰雹';
+        return '未知';
     }
 
     function getSavedCity() {
@@ -833,60 +971,71 @@
         try { localStorage.setItem('startpage-weather-city', city); } catch (_) {}
     }
 
-    function renderWeather(data) {
-        if (!data || !data.current_condition || !data.current_condition[0]) return;
-        const cur = data.current_condition[0];
-        const desc = (cur.weatherDesc && cur.weatherDesc[0] && cur.weatherDesc[0].value) || '未知';
-        const area = (data.nearest_area && data.nearest_area[0]) || {};
-        const cityName = (area.areaName && area.areaName[0] && area.areaName[0].value) || '当前位置';
-        const country = (area.country && area.country[0] && area.country[0].value) || '';
-        weatherIcon.textContent = getWeatherEmoji(desc);
-        weatherTemp.textContent = cur.temp_C + '°C';
-        weatherDesc.textContent = desc;
-        weatherCity.textContent = country ? (cityName + ' · ' + country) : cityName;
+    function renderWeather(data, cityName) {
+        if (!data || !data.current) return;
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weather_code;
+        weatherIcon.textContent = getWeatherEmoji(code);
+        weatherTemp.textContent = temp + '°C';
+        weatherDesc.textContent = getWeatherDesc(code);
+        weatherCity.textContent = cityName || '当前位置';
         weatherLoading.style.display = 'none';
         weatherContent.style.display = 'flex';
     }
 
-    function fetchWeather(city) {
-        const url = city
-            ? 'https://wttr.in/' + encodeURIComponent(city) + '?format=j1&lang=zh'
-            : 'https://wttr.in/?format=j1&lang=zh';
-        return fetch(url, { headers: { 'Accept-Language': 'zh' } })
-            .then(res => { if (!res.ok) throw new Error('weather http ' + res.status); return res.json(); });
+    function fetchWeatherByCoords(lat, lon) {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&hourly=temperature_2m&timezone=auto`;
+        return fetch(url).then(res => {
+            if (!res.ok) throw new Error('weather http ' + res.status);
+            return res.json();
+        });
+    }
+
+    function geocodeCity(city) {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=zh`;
+        return fetch(url).then(res => {
+            if (!res.ok) throw new Error('geocode http ' + res.status);
+            return res.json();
+        }).then(data => {
+            if (!data.results || data.results.length === 0) throw new Error('city not found');
+            return data.results[0];
+        });
     }
 
     function initWeather() {
         const savedCity = getSavedCity();
         if (savedCity) {
-            fetchWeather(savedCity)
-                .then(renderWeather)
+            geocodeCity(savedCity)
+                .then(geo => fetchWeatherByCoords(geo.latitude, geo.longitude))
+                .then(data => renderWeather(data, savedCity))
                 .catch(() => {
-                    fetchWeather('').then(renderWeather).catch(() => {
-                        weatherLoading.textContent = '天气加载失败';
-                    });
+                    fallbackWeather();
                 });
         } else {
             if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
                 navigator.geolocation.getCurrentPosition(function(pos) {
-                    const lat = pos.coords.latitude.toFixed(2);
-                    const lon = pos.coords.longitude.toFixed(2);
-                    fetchWeather(lat + ',' + lon)
-                        .then(renderWeather)
-                        .catch(() => fetchWeather('').then(renderWeather).catch(() => {
-                            weatherLoading.textContent = '天气加载失败';
-                        }));
+                    const lat = pos.coords.latitude.toFixed(4);
+                    const lon = pos.coords.longitude.toFixed(4);
+                    fetchWeatherByCoords(lat, lon)
+                        .then(data => renderWeather(data, '当前位置'))
+                        .catch(() => {
+                            fallbackWeather();
+                        });
                 }, function() {
-                    fetchWeather('').then(renderWeather).catch(() => {
-                        weatherLoading.textContent = '天气加载失败';
-                    });
+                    fallbackWeather();
                 }, { timeout: 5000 });
             } else {
-                fetchWeather('').then(renderWeather).catch(() => {
-                    weatherLoading.textContent = '天气加载失败';
-                });
+                fallbackWeather();
             }
         }
+    }
+
+    function fallbackWeather() {
+        fetchWeatherByCoords(39.9042, 116.4074)
+            .then(data => renderWeather(data, '北京'))
+            .catch(() => {
+                weatherLoading.textContent = '天气加载失败';
+            });
     }
 
     function isInteracting() {
@@ -925,6 +1074,8 @@
         loadConfig();
         loadEffectSettings();
         loadLiquidComponents();
+        loadVisibleComponents();
+        initScaleFactor();
         renderEngineSelect();
         setDailyQuote();
         initTime();

@@ -19,6 +19,7 @@
     --liquid-shadow: 0.18;
     --liquid-edge: 0.08;
     --liquid-shine: 0.5;
+    --scale: 1;
 }
 
 body {
@@ -72,61 +73,61 @@ body {
 /* ===== 顶部时间显示 ===== */
 .time-display {
     position: fixed;
-    top: 32px;
+    top: calc(32px * var(--scale));
     left: 50%;
-    transform: translateX(-50%) translateY(-10px);
+    transform: translateX(-50%) translateY(calc(-10px * var(--scale)));
     z-index: 30;
     text-align: center;
     color: #f0f6ff;
     pointer-events: none;
     opacity: 0;
     background: rgba(10, 16, 30, 0.35);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(calc(28px * var(--scale))) saturate(180%);
+    -webkit-backdrop-filter: blur(calc(28px * var(--scale))) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 14px 32px 10px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border-radius: calc(20px * var(--scale));
+    padding: calc(14px * var(--scale)) calc(32px * var(--scale)) calc(10px * var(--scale));
+    box-shadow: 0 calc(8px * var(--scale)) calc(32px * var(--scale)) rgba(0, 0, 0, 0.3);
     animation: timeFadeIn 0.8s var(--ios-ease) 0.3s forwards;
 }
 @keyframes timeFadeIn {
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 .time-main {
-    font-size: 3.4rem;
+    font-size: calc(3.4rem * var(--scale));
     font-weight: 200;
-    letter-spacing: 2px;
+    letter-spacing: calc(2px * var(--scale));
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+    text-shadow: 0 calc(4px * var(--scale)) calc(24px * var(--scale)) rgba(0, 0, 0, 0.6);
     line-height: 1.1;
     color: white;
 }
 .time-date {
-    font-size: 0.78rem;
+    font-size: calc(0.78rem * var(--scale));
     font-weight: 400;
     color: #c0d0f0;
-    margin-top: 4px;
-    letter-spacing: 1.2px;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    margin-top: calc(4px * var(--scale));
+    letter-spacing: calc(1.2px * var(--scale));
+    text-shadow: 0 calc(2px * var(--scale)) calc(12px * var(--scale)) rgba(0, 0, 0, 0.5);
     opacity: 0.9;
 }
 
 /* ===== 每日一言 (透明) ===== */
 .daily-quote-module {
     position: fixed;
-    top: 24px;
-    left: 24px;
+    top: calc(24px * var(--scale));
+    left: calc(24px * var(--scale));
     z-index: 30;
-    max-width: 420px;
+    max-width: calc(420px * var(--scale));
     background: rgba(10, 16, 30, 0.4);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(calc(24px * var(--scale))) saturate(180%);
+    -webkit-backdrop-filter: blur(calc(24px * var(--scale))) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    padding: 12px 18px;
+    border-radius: calc(16px * var(--scale));
+    box-shadow: 0 calc(8px * var(--scale)) calc(32px * var(--scale)) rgba(0, 0, 0, 0.3);
+    padding: calc(12px * var(--scale)) calc(18px * var(--scale));
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(calc(-20px * var(--scale)));
     animation: quoteSlideIn 0.8s var(--ios-ease) 0.5s forwards;
 }
 @keyframes quoteSlideIn {
@@ -513,12 +514,12 @@ body.theme-system .effect-value {
 }
 
 .search-dot {
-    width: 64px;
-    height: 64px;
+    width: calc(64px * var(--scale));
+    height: calc(64px * var(--scale));
     border-radius: 50%;
     background: rgba(12, 18, 34, 0.7);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(calc(28px * var(--scale))) saturate(180%);
+    -webkit-backdrop-filter: blur(calc(28px * var(--scale))) saturate(180%);
     border: 1px solid rgba(255,255,255,0.1);
     display: flex;
     align-items: center;
@@ -566,13 +567,13 @@ body.theme-system .effect-value {
     width: 100%;
     flex-shrink: 0;
     background: rgba(12, 18, 34, 0.55);
-    backdrop-filter: blur(var(--glass-blur, 32px)) saturate(var(--glass-saturate, 180%));
-    -webkit-backdrop-filter: blur(var(--glass-blur, 32px)) saturate(var(--glass-saturate, 180%));
-    border-radius: 60px;
-    padding: 6px 6px 6px 24px;
+    backdrop-filter: blur(calc(var(--glass-blur, 32px) * var(--scale))) saturate(var(--glass-saturate, 180%));
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur, 32px) * var(--scale))) saturate(var(--glass-saturate, 180%));
+    border-radius: calc(60px * var(--scale));
+    padding: calc(6px * var(--scale)) calc(6px * var(--scale)) calc(6px * var(--scale)) calc(24px * var(--scale));
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 
-        0 20px 60px rgba(0,0,0,0.6),
+        0 calc(20px * var(--scale)) calc(60px * var(--scale)) rgba(0,0,0,0.6),
         0 0 0 1px rgba(255,255,255,0.02) inset;
     display: flex;
     align-items: center;
@@ -1125,6 +1126,17 @@ body.theme-light .bookmark-icon-small {
     font-size: 0.8rem;
     padding: 8px 0;
 }
+.history-show-more {
+    color: #7aa9ff;
+    font-size: 0.75rem;
+    padding: 6px 0;
+    text-align: center;
+    cursor: pointer;
+    transition: opacity 0.2s var(--ios-ease);
+}
+.history-show-more:hover {
+    opacity: 0.7;
+}
 
 /* ===== 网站收藏区域 ===== */
 .bookmarks-container {
@@ -1403,7 +1415,31 @@ body.idle .search-dot-wrapper {
     border: 1px solid var(--glass-border);
 }
 
-/* ===== 液态玻璃效果 ===== */
+/* ===== 组件可见性控制 ===== */
+body.hide-time .time-display {
+    display: none;
+}
+body.hide-quote .daily-quote-module {
+    display: none;
+}
+body.hide-search .search-dot-wrapper {
+    display: none;
+}
+body.hide-bookmarks .bookmarks-container {
+    display: none;
+}
+body.hide-weather .weather-widget {
+    display: none;
+}
+body.hide-wallpaper .wallpaper-info {
+    display: none;
+}
+body.hide-settingsDot .settings-dot {
+    display: none;
+}
+body.hide-searchDot .search-dot {
+    display: none;
+}
 .liquid-glass {
     isolation: isolate;
     background:
@@ -1853,10 +1889,17 @@ body.theme-system .weather-desc {
         letter-spacing: 1px;
     }
     .daily-quote-module {
-        max-width: calc(100vw - 100px);
-        top: max(80px, calc(env(safe-area-inset-top) + 72px));
-        left: 16px;
-        padding: 8px 12px;
+        position: fixed;
+        top: auto;
+        bottom: auto;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        max-width: calc(90vw - 32px);
+        top: calc(env(safe-area-inset-top) + 90px);
+        padding: 8px 16px;
+        text-align: center;
+        border-radius: 16px;
     }
     .quote-text {
         font-size: 0.78rem;
