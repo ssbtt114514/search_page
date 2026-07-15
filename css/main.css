@@ -20,6 +20,10 @@
     --liquid-edge: 0.08;
     --liquid-shine: 0.5;
     --scale: 1;
+    --scrollbar-width: 6px;
+    --scrollbar-track: rgba(255, 255, 255, 0.04);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.18);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.35);
 }
 
 body {
@@ -29,6 +33,32 @@ body {
     background: #0b0e14;
     color: #f0f4ff;
     position: relative;
+}
+
+/* ===== 自定义滚动条 ===== */
+::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+}
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: calc(var(--scrollbar-width) / 2);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: calc(var(--scrollbar-width) / 2);
+    transition: background 0.2s var(--ios-ease);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 #bg-layer {
@@ -274,6 +304,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: 14px;
+    max-height: 60vh;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 .settings-group {
     display: flex;
@@ -1008,6 +1041,8 @@ body.theme-light .bookmark-icon-small {
     max-height: 200px;
     padding: 16px 24px 24px;
     margin-top: 8px;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 .history-header {
     display: flex;
@@ -1212,6 +1247,9 @@ body.idle .search-dot-wrapper {
     gap: 12px;
     padding: 0 16px 8px;
     justify-content: center;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 .bookmark-card {
     width: 68px;
@@ -1689,6 +1727,7 @@ body.theme-system .liquid-toggle-row {
     .bookmarks-grid {
         gap: 8px;
         padding: 0 16px 16px;
+        max-height: 180px;
     }
     .bookmarks-header {
         padding: 0 16px;
@@ -2089,6 +2128,7 @@ body.theme-system .weather-desc {
     .bookmarks-grid {
         gap: 6px;
         padding: 0 8px 4px;
+        max-height: 150px;
     }
     .bookmark-card {
         width: 52px;
@@ -2144,6 +2184,7 @@ body.theme-system .weather-desc {
         right: 8px;
         left: 8px;
         border-radius: 16px;
+        max-height: 75vh;
     }
     .settings-content {
         padding: 12px;
