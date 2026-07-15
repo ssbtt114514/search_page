@@ -576,9 +576,12 @@ body.theme-system .effect-value {
         0 0 0 1px rgba(255,255,255,0.02) inset;
     display: flex;
     align-items: center;
+    gap: 8px;
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.3s var(--ios-ease), transform 0.4s var(--ios-spring), backdrop-filter 0.4s var(--ios-ease);
+    position: relative;
+    z-index: 1;
 }
 .search-expand-container.expanded .search-row {
     opacity: 1;
@@ -603,6 +606,7 @@ body.theme-system .effect-value {
     margin-right: 6px;
     position: relative;
     z-index: 2;
+    flex-shrink: 0;
 }
 .search-expand-container .engine-selector select {
     -webkit-appearance: none;
@@ -628,6 +632,22 @@ body.theme-system .effect-value {
     text-overflow: ellipsis;
     pointer-events: auto;
     -webkit-tap-highlight-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    visibility: visible;
+    opacity: 1;
+}
+.search-expand-container.expanded .search-row .engine-selector {
+    flex-shrink: 0;
+    min-width: 80px;
+    z-index: 10;
+}
+.search-expand-container.expanded .search-row .engine-selector select {
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative;
+    z-index: 100;
 }
 .search-expand-container .engine-selector select:hover {
     background-color: rgba(255, 255, 255, 0.14);
@@ -637,11 +657,13 @@ body.theme-system .effect-value {
 .search-expand-container .engine-selector select:focus {
     border-color: rgba(70, 130, 255, 0.6);
     box-shadow: 0 0 0 3px rgba(70, 130, 255, 0.18);
+    z-index: 200;
 }
 .search-expand-container .engine-selector select option {
     background: #1a2233;
     color: #e0ecff;
     padding: 8px;
+    font-size: 0.85rem;
 }
 .search-expand-container .search-btn {
     width: 52px;
