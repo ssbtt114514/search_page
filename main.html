@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>起始页 · 模块化</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+    <!-- 背景层 -->
+    <div id="bg-layer"></div>
+    <div class="overlay"></div>
+
+    <!-- 顶部时间显示 -->
+    <div class="time-display" id="timeDisplay">
+        <div class="time-main" id="timeMain">--:--:--</div>
+        <div class="time-date" id="timeDate">加载中…</div>
+    </div>
+
+    <!-- 左上：每日一言 -->
+    <div class="daily-quote-module" id="quoteModule">
+        <div class="quote-text" id="quoteText">“生活不是等待风暴过去，而是学会在雨中翩翩起舞。”</div>
+        <div class="quote-author" id="quoteAuthor">—— 佚名</div>
+    </div>
+
+    <!-- 设置小点 (右上角) -->
+    <div class="settings-dot" id="settingsDot" title="设置">
+        <span>⚙</span>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div class="settings-popup" id="settingsPopup">
+        <div class="settings-header">
+            <span>⚙️ 设置</span>
+            <button class="settings-close" id="settingsClose">✕</button>
+        </div>
+        <div class="settings-body" id="settingsBody">
+            <!-- 壁纸 -->
+            <div class="settings-group">
+                <span class="settings-label">🖼️ 壁纸</span>
+                <button class="settings-btn" data-bg="anime">🎨 二次元</button>
+                <button class="settings-btn active" data-bg="bing">🌅 必应</button>
+                <button class="settings-btn" data-bg="unsplash">🖼️ Unsplash</button>
+                <button class="settings-btn" data-bg="pexels">📷 Pexels</button>
+                <button class="settings-btn" data-bg="video">🎬 视频</button>
+                <button class="settings-btn" data-bg="custom">📎 链接</button>
+                <button class="settings-btn" data-bg="local">📁 本地</button>
+            </div>
+            <div class="settings-divider"></div>
+            <!-- 音量 -->
+            <div class="settings-group volume-group">
+                <span class="settings-label">🔊 音量</span>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.02" value="0.6">
+                <button class="mute-btn" id="muteToggle">🔇</button>
+            </div>
+            <div class="settings-divider"></div>
+            <!-- 模糊度 -->
+            <div class="settings-group">
+                <span class="settings-label">🔮 模糊度</span>
+                <input type="range" id="blurSlider" class="effect-slider" min="0" max="60" step="1" value="28">
+                <span class="effect-value" id="blurValue">28</span>
+            </div>
+            <!-- 液态玻璃 -->
+            <div class="settings-group">
+                <span class="settings-label">💧 液态</span>
+                <input type="range" id="liquidSlider" class="effect-slider" min="0" max="100" step="1" value="50">
+                <span class="effect-value" id="liquidValue">50</span>
+            </div>
+            <!-- 液态玻璃组件开关 -->
+            <div class="settings-group liquid-components-group">
+                <span class="settings-label">💧 组件</span>
+                <div class="liquid-toggle-grid">
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="time" checked>
+                        <span>🕐 时间</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="quote" checked>
+                        <span>💬 一言</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="search" checked>
+                        <span>🔍 搜索</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="bookmarks" checked>
+                        <span>⭐ 收藏</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="weather">
+                        <span>🌤 天气</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="wallpaper">
+                        <span>🖼️ 壁纸</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="settings">
+                        <span>⚙️ 设置</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="searchDot">
+                        <span>🔘 搜索圆点</span>
+                    </label>
+                    <label class="liquid-toggle-row">
+                        <input type="checkbox" data-liquid-comp="settingsDot">
+                        <span>⚙ 设置圆点</span>
+                    </label>
+                </div>
+            </div>
+            <div class="settings-divider"></div>
+            <!-- 主题 -->
+            <div class="settings-group">
+                <span class="settings-label">🌓 主题</span>
+                <button class="settings-btn theme-btn active" data-theme="light">☀️ 亮</button>
+                <button class="settings-btn theme-btn" data-theme="dark">🌙 暗</button>
+                <button class="settings-btn theme-btn" data-theme="system">💻 跟随系统</button>
+            </div>
+            <div class="settings-divider"></div>
+            <!-- 搜索框隐身开关 -->
+            <div class="settings-group">
+                <span class="settings-label">🔍 隐身</span>
+                <button class="settings-btn stealth-btn active" data-stealth="on">开启</button>
+                <button class="settings-btn stealth-btn" data-stealth="off">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索圆点展开 (鼠标悬停展开) -->
+    <div class="search-dot-wrapper" id="searchDotWrapper">
+        <div class="search-dot" id="searchDot">
+            <svg viewBox="0 0 24 24" width="32" height="32">
+                <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2" fill="none"/>
+                <line x1="16" y1="16" x2="22" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div class="search-expand-container" id="searchExpandContainer">
+            <div class="search-row" id="searchRow">
+                <input type="text" id="searchInput" placeholder="输入关键词…">
+                <div class="engine-selector">
+                    <select id="engineSelect"></select>
+                </div>
+                <button class="search-btn" id="searchBtn" aria-label="搜索">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="16" y1="16" x2="22" y2="22" />
+                    </svg>
+                </button>
+            </div>
+            <div class="search-history" id="searchHistory">
+                <div class="history-header">
+                    <span class="history-label">🔍 搜索历史</span>
+                    <button class="clear-history-btn" id="clearHistoryBtn">清除</button>
+                </div>
+                <div class="history-tags" id="historyTags"></div>
+            </div>
+            <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+    </div>
+
+    <div class="bookmarks-container" id="bookmarksContainer">
+        <div class="bookmarks-header">
+            <span class="bookmarks-label">⭐ 我的收藏</span>
+            <button class="add-bookmark-btn" id="addBookmarkBtn">+</button>
+        </div>
+        <div class="bookmarks-grid" id="bookmarksGrid"></div>
+    </div>
+
+    <!-- 壁纸信息显示 -->
+    <div class="wallpaper-info" id="wallpaperInfo">
+        <div class="wallpaper-source" id="wallpaperSource"></div>
+        <div class="wallpaper-author" id="wallpaperAuthor"></div>
+    </div>
+
+    <!-- 天气组件 -->
+    <div class="weather-widget" id="weatherWidget">
+        <div class="weather-loading" id="weatherLoading">加载天气中…</div>
+        <div class="weather-content" id="weatherContent" style="display:none;">
+            <div class="weather-icon" id="weatherIcon"></div>
+            <div class="weather-info">
+                <div class="weather-temp" id="weatherTemp"></div>
+                <div class="weather-desc" id="weatherDesc"></div>
+                <div class="weather-city" id="weatherCity"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script/settings.js"></script>
+    <script src="script/video.js"></script>
+    <script src="script/main.js"></script>
+</body>
+</html>
