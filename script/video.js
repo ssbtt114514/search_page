@@ -2,7 +2,11 @@
     'use strict';
 
     const BING_IMAGE_API = 'https://bing.com/HPImageArchive.aspx?format=js&idx=0&n=1';
-    const ANIME_API = 'https://api.btstu.cn/sjbz/api.php?format=json&lx=dongman';
+    const ANIME_APIS = [
+        { name: 'btstu', url: 'https://api.btstu.cn/sjbz/api.php?format=json&lx=dongman', extract: d => d && d.imgurl },
+        { name: 'btstu-img', url: 'https://api.btstu.cn/sjbz/api.php?lx=dongman&format=images', extract: () => 'https://api.btstu.cn/sjbz/api.php?lx=dongman&format=images&t=' + Date.now() },
+        { name: 'vvhan', url: 'https://api.vvhan.com/api/wallpaper/acg?type=json', extract: d => d && (d.data && d.data.url || d.url) }
+    ];
     const UNSPLASH_API = 'https://api.unsplash.com/photos/random?orientation=landscape&per_page=1';
     const PEXELS_API = 'https://api.pexels.com/v1/search?query=nature+landscape&per_page=1&orientation=landscape';
     const SAMPLE_VIDEO = 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-2217-large.mp4';
@@ -134,47 +138,71 @@
     function loadAnimeBackground() {
         if (bgLoadInProgress) return;
         bgLoadInProgress = true;
-        
+
         if (videoElement) {
             videoElement.pause();
             videoElement.remove();
             videoElement = null;
         }
-        
+
         currentBgType = 'anime';
         const img = createBgImage();
-        img.onerror = function() {
-            showFallbackBackground();
+        let apiIndex = 0;
+        let imgErrored = false;
+
+        const onSuccess = () => {
+            if (imgErrored) return;
+            imgErrored = true;
+            fadeInNewBackground(img);
+            showWallpaperInfo(WALLPAPER_SOURCES.anime.icon + ' ' + WALLPAPER_SOURCES.anime.name, '');
             bgLoadInProgress = false;
+            console.log('🎨 二次元壁纸加载成功');
         };
-        
-        fetch(ANIME_API)
-            .then(res => {
-                if (!res.ok) throw new Error('Network response was not ok');
-                return res.json();
-            })
-            .then(data => {
-                if (data && data.imgurl) {
-                    img.src = data.imgurl;
-                    img.onload = () => {
-                        fadeInNewBackground(img);
-                        showWallpaperInfo(WALLPAPER_SOURCES.anime.icon + ' ' + WALLPAPER_SOURCES.anime.name, '');
-                        bgLoadInProgress = false;
-                    };
-                    console.log('🎨 二次元壁纸加载成功');
-                } else {
-                    throw new Error('No image data');
-                }
-            })
-            .catch(err => {
-                console.warn('二次元壁纸加载失败，使用备用', err);
-                img.src = WALLPAPER_SOURCES.anime.fallback + '&' + Date.now();
-                img.onload = () => {
-                    fadeInNewBackground(img);
-                    showWallpaperInfo(WALLPAPER_SOURCES.anime.icon + ' ' + WALLPAPER_SOURCES.anime.name, '');
-                    bgLoadInProgress = false;
-                };
-            });
+
+        const tryDirectImage = () => {
+            img.onload = onSuccess;
+            img.onerror = () => {
+                if (imgErrored) return;
+                imgErrored = true;
+                console.warn('二次元直链也失败');
+                showFallbackBackground();
+                bgLoadInProgress = false;
+            };
+            img.src = 'https://api.btstu.cn/sjbz/api.php?lx=dongman&format=images&t=' + Date.now();
+        };
+
+        const tryNextApi = () => {
+            if (apiIndex >= ANIME_APIS.length) {
+                tryDirectImage();
+                return;
+            }
+            const api = ANIME_APIS[apiIndex++];
+            console.log('尝试二次元 API:', api.name);
+            fetch(api.url)
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    const url = api.extract(data);
+                    if (url) {
+                        img.onload = onSuccess;
+                        img.onerror = () => {
+                            console.warn(api.name + ' 提取的 URL 加载失败，尝试下一个');
+                            tryNextApi();
+                        };
+                        img.src = url;
+                    } else {
+                        throw new Error('No image data');
+                    }
+                })
+                .catch(err => {
+                    console.warn(api.name + ' 失败:', err);
+                    tryNextApi();
+                });
+        };
+
+        tryNextApi();
     }
 
     function loadBingBackground() {
